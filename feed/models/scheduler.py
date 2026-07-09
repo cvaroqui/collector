@@ -3383,7 +3383,7 @@ def __svcmon_update(vars, vals, auth):
         return
 
     # set the hv field of container nodes
-    if 'mon_vmname' in h and h['mon_vmname'] is not None and len(h['mon_vmname']) > 0 and h['mon_containerstatus'] == "up":
+    if 'mon_vmname' in h and h['mon_vmname'] is not None and len(h['mon_vmname']) > 0 and h['mon_containerstatus'] in ("up", "stdby up"):
         node = get_node(node_id)
         q = db.nodes.nodename == h['mon_vmname']
         q &= db.nodes.app == node.app
@@ -5452,7 +5452,7 @@ def merge_daemon_status(node_id):
             return node_ids[nodename]
 
     def update_container_node_fields(svc, peer, container_id, idata):
-        if idata["resources"][container_id]["status"] != "up":
+        if idata["resources"][container_id]["status"] not in ("up", "stdby up"):
             return set()
         cname = idata["encap"][container_id]["hostname"]
         q = db.nodes.nodename == cname
